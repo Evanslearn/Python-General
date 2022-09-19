@@ -91,19 +91,28 @@ def create_dataset(xs, ys, n_classes=10):
 train_dataset = create_dataset(x_train, y_train)
 val_dataset = create_dataset(x_val, y_val)
 
-model = keras.Sequential([
-    keras.layers.Reshape(target_shape=(28 * 28,), input_shape=(28, 28)),
-    keras.layers.Dense(units=256, activation='relu'),
-    keras.layers.Dense(units=192, activation='relu'),
-    keras.layers.Dense(units=128, activation='relu'),
-    keras.layers.Dense(units=10, activation='softmax')
-])
 
-model.compile(optimizer='adam',
+class KerasModels:
+
+    def kSeq():
+        model = keras.Sequential([
+            keras.layers.Reshape(target_shape=(28 * 28,), input_shape=(28, 28)),
+            keras.layers.Dense(units=256, activation='relu'),
+            keras.layers.Dense(units=192, activation='relu'),
+            keras.layers.Dense(units=128, activation='relu'),
+            keras.layers.Dense(units=10, activation='softmax')
+        ])
+        return model
+
+
+ModelObject = KerasModels
+
+MyModel = ModelObject.kSeq()
+MyModel.compile(optimizer='adam',
               loss=tf.losses.CategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
-history = model.fit(
+history = MyModel.fit(
     train_dataset.repeat(),
     epochs=10,
     steps_per_epoch=500,
@@ -113,7 +122,7 @@ history = model.fit(
 )
 
 # Store the predictions (predictions on the validation set)
-predictions = model.predict(val_dataset)
+predictions = MyModel.predict(val_dataset)
 # Our model outputs a probability distribution about how likely it is for each clothing type to be shown on an image.
 # To make our classification, We take the one with the highest probability
 
@@ -126,5 +135,5 @@ plot_sample_predictions(i0)
 
 
 
-#tf.keras.utils.plot_model(model, to_file='model.png')
+#tf.keras.utils.plot_model(MyModel, to_file='model.png')
 #print(f'prediction -> {prediction}')
